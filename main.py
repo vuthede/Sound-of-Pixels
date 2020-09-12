@@ -504,10 +504,10 @@ def main(args):
         'val': {'epoch': [], 'err': [], 'sdr': [], 'sir': [], 'sar': []}}
 
     # Eval mode
-    evaluate(netWrapper, loader_val, history, 0, args)
-    if args.mode == 'eval':
-        print('Evaluation Done!')
-        return
+    # evaluate(netWrapper, loader_val, history, 0, args)
+    # if args.mode == 'eval':
+    #     print('Evaluation Done!')
+    #     return
 
     # Training loop
     for epoch in range(1, args.num_epoch + 1):
