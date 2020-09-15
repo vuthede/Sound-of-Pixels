@@ -1,14 +1,28 @@
 import os
 import random
 from .base import BaseDataset
-
+import glob
 
 class MUSICMixDataset(BaseDataset):
-    def __init__(self, list_sample, opt, **kwargs):
+    # Used for silence video
+    # SCENCE_IMAGE_DIR = "/home/ubuntu/MyHelperModule/downloaddata/download_data_for_sound_of_pixel_paper/image_sence"
+    def __init__(self, scence_image_dir, list_sample, opt, **kwargs):
         super(MUSICMixDataset, self).__init__(
             list_sample, opt, **kwargs)
         self.fps = opt.frameRate
         self.num_mix = opt.num_mix
+        self.list_scence_image =  glob.glob(scence_image_dir + "/*.jpg") # For synthesize silence sample
+
+    def __random_silence_video(self):
+        # 30% will be silience video
+        a = np.random.randint(0,10)
+        if a>=3:
+            return False
+        return True
+
+    def __random_scence_image(self):
+        index = np.random.randint(0,len(self.list_scence_image)-1)
+        return self.list_scence_image[index]
 
     def __getitem__(self, index):
         N = self.num_mix
@@ -51,6 +65,16 @@ class MUSICMixDataset(BaseDataset):
                         path_frameN,
                         '{:06d}.jpg'.format(center_frameN + idx_offset)))
             path_audios[n] = path_audioN
+        
+        # Random 30 % using silent audio to regulalize model
+        using_silence = self.__random_silence_video()
+        if using_silence and len(infos) >1:
+            print("Using silence image and video!!!!!!!!!!!!!!!!!!!!!!!!")
+            path_frames[1]= []
+            for i in range(self.num_frames):
+                path_frames[1].append(self.__random_scence_image())
+            path_audios[1] = "FakeSilenceFile.silent" # it can be any string as long as it ends by "silent"
+
 
         # load frames and audios, STFT
         try:

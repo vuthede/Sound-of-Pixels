@@ -470,9 +470,10 @@ def main(args):
     crit = builder.build_criterion(arch=args.loss)
 
     # Dataset and Loader
-    dataset_train = MUSICMixDataset(
+    scence_image_dir = "/home/ubuntu/MyHelperModule/downloaddata/download_data_for_sound_of_pixel_paper/image_sence"
+    dataset_train = MUSICMixDataset(scence_image_dir,
         args.list_train, args, split='train')
-    dataset_val = MUSICMixDataset(
+    dataset_val = MUSICMixDataset(scence_image_dir,
         args.list_val, args, max_sample=args.num_val, split='val')
 
     loader_train = torch.utils.data.DataLoader(
