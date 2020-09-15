@@ -29,9 +29,9 @@ OPTS+="--audLen 65535 "
 OPTS+="--audRate 11025 "
 
 # learning params
-OPTS+="--num_gpus 4 "
-OPTS+="--workers 48 "
-OPTS+="--batch_size_per_gpu 20 "
+OPTS+="--num_gpus 2 "
+OPTS+="--workers 8 "
+OPTS+="--batch_size_per_gpu 40 "
 OPTS+="--lr_frame 1e-4 "
 OPTS+="--lr_sound 1e-3 "
 OPTS+="--lr_synthesizer 1e-3 "
@@ -43,4 +43,4 @@ OPTS+="--disp_iter 20 "
 OPTS+="--num_vis 40 "
 OPTS+="--num_val 256 "
 
-python -u main.py $OPTS
+python -W ignore -u main.py $OPTS

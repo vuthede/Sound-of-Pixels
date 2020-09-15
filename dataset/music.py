@@ -2,6 +2,7 @@ import os
 import random
 from .base import BaseDataset
 import glob
+import numpy as np
 
 class MUSICMixDataset(BaseDataset):
     # Used for silence video
@@ -74,7 +75,8 @@ class MUSICMixDataset(BaseDataset):
             for i in range(self.num_frames):
                 path_frames[1].append(self.__random_scence_image())
             path_audios[1] = "FakeSilenceFile.silent" # it can be any string as long as it ends by "silent"
-
+        else:
+            print("Using normal image and video")
 
         # load frames and audios, STFT
         try:

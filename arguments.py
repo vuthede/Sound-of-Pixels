@@ -15,11 +15,11 @@ class ArgParser(object):
                             help="architecture of net_frame")
         parser.add_argument('--arch_synthesizer', default='linear',
                             help="architecture of net_synthesizer")
-        parser.add_argument('--weights_sound', default='',
+        parser.add_argument('--weights_sound', default='./oldcheckpoint/sound_best.pth',
                             help="weights to finetune net_sound")
-        parser.add_argument('--weights_frame', default='',
+        parser.add_argument('--weights_frame', default='./oldcheckpoint/frame_best.pth',
                             help="weights to finetune net_frame")
-        parser.add_argument('--weights_synthesizer', default='',
+        parser.add_argument('--weights_synthesizer', default='./oldcheckpoint/synthesizer_best.pth',
                             help="weights to finetune net_synthesizer")
         parser.add_argument('--num_channels', default=32, type=int,
                             help='number of channels')
