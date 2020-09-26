@@ -21,6 +21,11 @@ from utils import AverageMeter, \
     combine_video_audio, save_video, makedirs
 from viz import plot_loss_metrics, HTMLVisualizer
 
+import wandb
+wandb.init(project="Sound of Pixels for People Voice")
+# wandb.config.backbone = "MobileNet-v2"
+wandb.config.description="Strideframe=8, 3 frames, sr=11025, lenaudio=65535==6 seconds. More data. 10% silent"
+
 
 # Network wrapper, defines forward pass
 class NetWrapper(torch.nn.Module):
@@ -347,6 +352,7 @@ def evaluate(netWrapper, loader, history, epoch, args):
                   sdr_meter.average(),
                   sir_meter.average(),
                   sar_meter.average()))
+    wandb.log({"valloss": loss_meter.average(), "sdr": sdr_meter.average(), "sir": sir_meter.average(), "sar": sar_meter.average()}, step=epoch)
     history['val']['epoch'].append(epoch)
     history['val']['err'].append(loss_meter.average())
     history['val']['sdr'].append(sdr_meter.average())
@@ -405,6 +411,9 @@ def train(netWrapper, loader, optimizer, history, epoch, args):
             fractional_epoch = epoch - 1 + 1. * i / args.epoch_iters
             history['train']['epoch'].append(fractional_epoch)
             history['train']['err'].append(err.item())
+            wandb.log({"metrics/trainloss": err.item()})
+
+        break
 
 
 def checkpoint(nets, history, epoch, args):
@@ -452,6 +461,7 @@ def adjust_learning_rate(optimizer, args):
 
 def main(args):
     # Network Builders
+    wandb.config.update(args)
     builder = ModelBuilder()
     net_sound = builder.build_sound(
         arch=args.arch_sound,
