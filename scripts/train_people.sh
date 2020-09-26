@@ -1,7 +1,7 @@
 #!/bin/bash
 
 OPTS=""
-OPTS+="--id MUSIC "
+OPTS+="--id PEOPLE "
 OPTS+="--list_train data/train.csv "
 OPTS+="--list_val data/val.csv "
 
@@ -22,7 +22,7 @@ OPTS+="--log_freq 1 "
 # frames-related
 OPTS+="--num_frames 3 "
 OPTS+="--stride_frames 8 "
-OPTS+="--frameRate 8 "
+OPTS+="--frameRate 30 "
 
 # audio-related
 OPTS+="--audLen 65535 "
@@ -31,16 +31,20 @@ OPTS+="--audRate 11025 "
 # learning params
 OPTS+="--num_gpus 2 "
 OPTS+="--workers 16 "
-OPTS+="--batch_size_per_gpu 30 "
+OPTS+="--batch_size_per_gpu 10 "
 OPTS+="--lr_frame 1e-4 "
 OPTS+="--lr_sound 1e-3 "
 OPTS+="--lr_synthesizer 1e-3 "
 OPTS+="--num_epoch 100 "
 OPTS+="--lr_steps 40 80 "
 
+#Hops and window
+#OPTS+="--stft_frame 400 "
+#OPTS+="--stft_hop 160"
+
 # display, viz
 OPTS+="--disp_iter 20 "
 OPTS+="--num_vis 40 "
 OPTS+="--num_val 256 "
 
-python -W ignore -u main.py $OPTS
+python -W ignore -u mainpeople.py $OPTS

@@ -13,11 +13,11 @@ class MUSICMixDataset(BaseDataset):
         self.fps = opt.frameRate
         self.num_mix = opt.num_mix
         self.list_scence_image =  glob.glob(scence_image_dir + "/*.jpg") # For synthesize silence sample
-
+        print(f'Len of list scence image: {len(self.list_scence_image)}')
     def __random_silence_video(self):
-        # 30% will be silience video
+        # 10% will be silience video
         a = np.random.randint(0,10)
-        if a>=3:
+        if a>=1:
             return False
         return True
 
@@ -45,15 +45,17 @@ class MUSICMixDataset(BaseDataset):
             infos[n] = self.list_sample[indexN]
 
         # select frames
-        idx_margin = max(
-            int(self.fps * 8), (self.num_frames // 2) * self.stride_frames)
+       # idx_margin = max(
+        #    int(self.fps * 4), (self.num_frames // 2) * self.stride_frames)
         for n, infoN in enumerate(infos):
             path_audioN, path_frameN, count_framesN = infoN
 
             if self.split == 'train':
                 # random, not to sample start and end n-frames
-                center_frameN = random.randint(
-                    idx_margin+1, int(count_framesN)-idx_margin)
+                #print(f'idx_margin: {idx_margin}. countframes:{count_framesN}')
+                #center_frameN = random.randint(
+                 #   idx_margin+1, int(count_framesN)-idx_margin)
+                center_frameN = random.randint(10, 80)
             else:
                 center_frameN = int(count_framesN) // 2
             center_frames[n] = center_frameN

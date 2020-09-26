@@ -3,6 +3,8 @@ import argparse
 
 class ArgParser(object):
     def __init__(self):
+        #resume = "/home/vtde/Sound-of-Pixels/ckpt/PEOPLE-2mix-LogFreq-resnet18dilated-unet7-linear-frames20stride1-maxpool-binary-weightedLoss-channels32-epoch100-step40_80"
+        resume = "./oldckps"
         parser = argparse.ArgumentParser()
         # Model related arguments
         parser.add_argument('--id', default='',
@@ -15,11 +17,11 @@ class ArgParser(object):
                             help="architecture of net_frame")
         parser.add_argument('--arch_synthesizer', default='linear',
                             help="architecture of net_synthesizer")
-        parser.add_argument('--weights_sound', default='./oldcheckpoint/sound_best.pth',
+        parser.add_argument('--weights_sound', default=f'{resume}/sound_latest.pth',
                             help="weights to finetune net_sound")
-        parser.add_argument('--weights_frame', default='./oldcheckpoint/frame_best.pth',
+        parser.add_argument('--weights_frame', default=f'{resume}/frame_latest.pth',
                             help="weights to finetune net_frame")
-        parser.add_argument('--weights_synthesizer', default='./oldcheckpoint/synthesizer_best.pth',
+        parser.add_argument('--weights_synthesizer', default=f'{resume}/synthesizer_latest.pth',
                             help="weights to finetune net_synthesizer")
         parser.add_argument('--num_channels', default=32, type=int,
                             help='number of channels')
@@ -93,7 +95,7 @@ class ArgParser(object):
                             default='data/train.csv')
         parser.add_argument('--list_val',
                             default='data/val.csv')
-        parser.add_argument('--dup_trainset', default=100, type=int,
+        parser.add_argument('--dup_trainset', default=2, type=int,
                             help='duplicate so that one epoch has more iters')
 
         # optimization related arguments

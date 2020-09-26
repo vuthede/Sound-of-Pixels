@@ -14,8 +14,8 @@ def find_recursive(root_dir, ext='.mp3'):
 
 
 if __name__ == '__main__':
-    prefix = "/home/vtde/MyHelperModule/downloaddata/download_data_for_sound_of_pixel_paper/segment_clean_sam"
     parser = argparse.ArgumentParser()
+    prefix = "/media/Databases/preprocess_avspeech/segment_sam_with_noise"
     parser.add_argument('--root_audio', default=f'{prefix}/audio',
                         help="root for extracted audio files")
     parser.add_argument('--root_frame', default=f'{prefix}/frames',
@@ -31,19 +31,39 @@ if __name__ == '__main__':
     # find all audio/frames pairs
     infos = []
     audio_files = find_recursive(args.root_audio, ext='.mp3')
+    
+    # Get unique video for train/ val
+    video_ids = os.listdir(args.root_audio)
+    n_video_train = int(len(video_ids) * 0.9)
+    random.shuffle(video_ids)
+
+    video_train_ids = video_ids[0:n_video_train]
+    video_valid_ids = video_ids[n_video_train:]
+
+    info_train = []
+    info_val = []
+
     for audio_path in audio_files:
         frame_path = audio_path.replace(args.root_audio, args.root_frame) \
                                .replace('.mp3', '.mp4')
         frame_files = glob.glob(frame_path + '/*.jpg')
-        if len(frame_files) >= args.fps * 4:
-            infos.append(','.join([audio_path, frame_path, str(len(frame_files))]))
-    print('{} audio/frames pairs found.'.format(len(infos)))
+        
+
+        if len(frame_files) >= 30 * 3: #90 frames
+            file_id = audio_path.split("/")[-2]
+            if file_id in video_train_ids:
+                info_train.append(','.join([audio_path, frame_path, str(len(frame_files))]))
+            else:
+                info_val.append(','.join([audio_path, frame_path, str(len(frame_files))]))
+                
+            
+    print('{} audio/frames train pairs found.'.format(len(info_train)))
+    print('{} audio/frames val pairs found.'.format(len(info_val)))
+
 
     # split train/val
-    n_train = int(len(infos) * 0.8)
-    random.shuffle(infos)
-    trainset = infos[0:n_train]
-    valset = infos[n_train:]
+    trainset = info_train
+    valset = info_val
     for name, subset in zip(['train', 'val'], [trainset, valset]):
         filename = '{}.csv'.format(os.path.join(args.path_output, name))
         with open(filename, 'w') as f:

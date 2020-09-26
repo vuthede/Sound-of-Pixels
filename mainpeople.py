@@ -22,6 +22,12 @@ from utils import AverageMeter, \
 from viz import plot_loss_metrics, HTMLVisualizer
 
 
+import wandb
+wandb.init(project="Sound of Pixels for People Voice")
+# wandb.config.backbone = "MobileNet-v2"
+wandb.config.description="Strideframe=8, 3 frames, sr=11025, lenaudio=65535==6 seconds. More data. 10% silent"
+
+
 # Network wrapper, defines forward pass
 class NetWrapper(torch.nn.Module):
     def __init__(self, nets, crit):
@@ -339,7 +345,6 @@ def evaluate(netWrapper, loader, history, epoch, args):
         # output visualization
         if len(vis_rows) < args.num_vis:
             output_visuals(vis_rows, batch_data, outputs, args)
-
     print('[Eval Summary] Epoch: {}, Loss: {:.4f}, '
           'SDR_mixture: {:.4f}, SDR: {:.4f}, SIR: {:.4f}, SAR: {:.4f}'
           .format(epoch, loss_meter.average(),
@@ -347,6 +352,7 @@ def evaluate(netWrapper, loader, history, epoch, args):
                   sdr_meter.average(),
                   sir_meter.average(),
                   sar_meter.average()))
+    wandb.log({"valloss": loss_meter.average(), "sdr": sdr_meter.average(), "sir": sir_meter.average(), "sar": sar_meter.average()}, step=epoch)
     history['val']['epoch'].append(epoch)
     history['val']['err'].append(loss_meter.average())
     history['val']['sdr'].append(sdr_meter.average())
@@ -405,7 +411,7 @@ def train(netWrapper, loader, optimizer, history, epoch, args):
             fractional_epoch = epoch - 1 + 1. * i / args.epoch_iters
             history['train']['epoch'].append(fractional_epoch)
             history['train']['err'].append(err.item())
-
+            wandb.log({"metrics/trainloss": err.item()}) 
 
 def checkpoint(nets, history, epoch, args):
     print('Saving checkpoints at {} epochs.'.format(epoch))
@@ -475,7 +481,7 @@ def main(args):
         args.list_train, args, split='train')
     dataset_val = MUSICMixDataset(scence_image_dir,
         args.list_val, args, max_sample=args.num_val, split='val')
-
+     
     loader_train = torch.utils.data.DataLoader(
         dataset_train,
         batch_size=args.batch_size,
@@ -490,10 +496,10 @@ def main(args):
         drop_last=False)
     args.epoch_iters = len(dataset_train) // args.batch_size
     print('1 Epoch = {} iters'.format(args.epoch_iters))
-
+    
     # Wrap networks
     netWrapper = NetWrapper(nets, crit)
-    netWrapper = torch.nn.DataParallel(netWrapper, device_ids=range(args.num_gpus))
+    netWrapper = torch.nn.DataParallel(netWrapper, device_ids=[0,1])
     netWrapper.to(args.device)
 
     # Set up optimizer
