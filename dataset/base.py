@@ -135,7 +135,7 @@ class BaseDataset(torchdata.Dataset):
         #         audio_raw = audio_raw[0, :]
         # else:
         audio_raw, rate = librosa.load(path, sr=None, mono=True)
-
+        audio_raw = audio_raw/np.max(audio_raw) # Devu added to normalize
         return audio_raw, rate
 
     def _load_audio(self, path, center_timestamp, nearest_resample=False):

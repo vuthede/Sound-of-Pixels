@@ -1,7 +1,7 @@
 #!/bin/bash
 
 OPTS=""
-OPTS+="--id PEOPLE "
+OPTS+="--id PEOPLE_with_voice_normalized "
 OPTS+="--list_train data/train.csv "
 OPTS+="--list_val data/val.csv "
 
