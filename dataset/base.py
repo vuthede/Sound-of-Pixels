@@ -108,6 +108,18 @@ class BaseDataset(torchdata.Dataset):
             frames.append(self._load_frame(path))
         frames = self.vid_transform(frames)
         return frames
+    
+    def _load_fake_frames(self, paths):
+        frames = []
+        for path in paths:
+            size = (224, 224)
+            color = (127,127,127)
+            im = Image.new('RGB', size, color)
+            frames.append(im)
+
+        frames = self.vid_transform(frames)
+        return frames
+
 
     def _load_frame(self, path):
         img = Image.open(path).convert('RGB')

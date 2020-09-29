@@ -50,43 +50,25 @@ class MUSICMixDataset(BaseDataset):
         for n, infoN in enumerate(infos):
             path_audioN, path_frameN, count_framesN = infoN
 
-            if self.split == 'train':
-                # random, not to sample start and end n-frames
-                #print(f'idx_margin: {idx_margin}. countframes:{count_framesN}')
-                #center_frameN = random.randint(
-                 #   idx_margin+1, int(count_framesN)-idx_margin)
-                center_frameN = random.randint(10, 80)
-            else:
-                center_frameN = int(count_framesN) // 2
+           
+            center_frameN = random.randint(40, 50) # 3 seconds 30fps =90 frames 
             center_frames[n] = center_frameN
 
             # absolute frame/audio paths
             for i in range(self.num_frames):
-                idx_offset = (i - self.num_frames // 2) * self.stride_frames
-                path_frames[n].append(
-                    os.path.join(
-                        path_frameN,
-                        '{:06d}.jpg'.format(center_frameN + idx_offset)))
+                path_frames[n].append("fakeframe.jpg")
             path_audios[n] = path_audioN
         
-        # Random 30 % using silent audio to regulalize model
-        using_silence = self.__random_silence_video()
-        if using_silence and len(infos) >1:
-            print("Using silence image and video!!!!!!!!!!!!!!!!!!!!!!!!")
-            path_frames[1]= []
-            for i in range(self.num_frames):
-                path_frames[1].append(self.__random_scence_image())
-            path_audios[1] = "FakeSilenceFile.silent" # it can be any string as long as it ends by "silent"
-        else:
-            print("Using normal image and video")
+
 
         # load frames and audios, STFT
         try:
             for n, infoN in enumerate(infos):
-                frames[n] = self._load_frames(path_frames[n])
+                frames[n] = self._load_fake_frames(path_frames[n])
                 # jitter audio
                 # center_timeN = (center_frames[n] - random.random()) / self.fps
-                center_timeN = (center_frames[n] - 0.5) / self.fps
+                FPS=30
+                center_timeN = (center_frames[n] - 0.5) / FPS
                 audios[n] = self._load_audio(path_audios[n], center_timeN)
             mag_mix, mags, phase_mix = self._mix_n_and_stft(audios)
 

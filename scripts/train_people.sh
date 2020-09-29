@@ -26,13 +26,13 @@ OPTS+="--frameRate 30 "
 
 # audio-related
 OPTS+="--audLen 65535 "
-OPTS+="--audRate 11025 "
+OPTS+="--audRate 16000 "
 
 # learning params
-OPTS+="--num_gpus 2 "
+OPTS+="--num_gpus 1 "
 OPTS+="--workers 16 "
-OPTS+="--batch_size_per_gpu 20 "
-OPTS+="--lr_frame 1e-4 "
+OPTS+="--batch_size_per_gpu 2 "
+OPTS+="--lr_frame 0 "
 OPTS+="--lr_sound 1e-3 "
 OPTS+="--lr_synthesizer 1e-3 "
 OPTS+="--num_epoch 100 "

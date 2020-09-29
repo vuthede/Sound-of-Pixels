@@ -412,6 +412,7 @@ def train(netWrapper, loader, optimizer, history, epoch, args):
             history['train']['epoch'].append(fractional_epoch)
             history['train']['err'].append(err.item())
             wandb.log({"metrics/trainloss": err.item()}) 
+        break
 
 def checkpoint(nets, history, epoch, args):
     print('Saving checkpoints at {} epochs.'.format(epoch))
@@ -499,7 +500,7 @@ def main(args):
     
     # Wrap networks
     netWrapper = NetWrapper(nets, crit)
-    netWrapper = torch.nn.DataParallel(netWrapper, device_ids=[0,1])
+    netWrapper = torch.nn.DataParallel(netWrapper, device_ids=[0])
     netWrapper.to(args.device)
 
     # Set up optimizer
