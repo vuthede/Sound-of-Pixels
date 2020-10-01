@@ -95,7 +95,7 @@ class ArgParser(object):
                             default='data/train.csv')
         parser.add_argument('--list_val',
                             default='data/val.csv')
-        parser.add_argument('--dup_trainset', default=2, type=int,
+        parser.add_argument('--dup_trainset', default=1, type=int,
                             help='duplicate so that one epoch has more iters')
 
         # optimization related arguments

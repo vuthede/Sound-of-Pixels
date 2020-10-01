@@ -27,8 +27,8 @@ def split_data_set_by_speaker(data_dir,validsettxt="valid.txt", cache_valid=True
         valid_files = read_all_ids(validsettxt)
     else:
         print(f"{validsettxt} does not exist. So we will generate new valid file")
-        s = random.randint(0, len(files)-100)
-        valid_files = files[s:s+100]
+        s = random.randint(0, len(files)-200)
+        valid_files = files[s:s+200]
         write_all_ids(valid_files,"valid.txt")
 
     
@@ -40,7 +40,7 @@ def split_data_set_by_speaker(data_dir,validsettxt="valid.txt", cache_valid=True
 
 
 if __name__ == '__main__':
-    audio_dir = "/home/vuthede/CVPR/speech_separation/data/audio/traindata"
+    audio_dir = "/home/vtde/traindata"
     output = "../data"
    
 
