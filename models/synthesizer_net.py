@@ -3,6 +3,42 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 
+class SynthesizeOnlyAudio(nn.Module):
+    def __init__(self, in_c, out_c):
+        super(SynthesizeOnlyAudio, self).__init__()
+        self.in_c = in_c
+        self.out_c = out_c
+        # self.conv2d = nn.Conv2d(self.in_c, self.out_c, kernel_size=3, padding=1)
+        self.hidden_size = 24
+        self.bilstm = nn.LSTM(self.in_c*256,hidden_size=self.hidden_size,num_layers=1, batch_first=True, bidirectional=False)
+        self.fc = nn.Linear(self.hidden_size, 600)
+        self.fc1 = nn.Linear(600, 600)
+        self.fc2 = nn.Linear(600, 600)
+        self.masks = nn.Linear(600, self.out_c*256)
+
+
+    def forward(self, feat_sound):
+        (B, C, H, W) = feat_sound.size()
+        x = feat_sound.permute(0,3,1,2).view(B, W,-1) #B, W, C*H
+        x, _ = self.bilstm(x) # B, W, hidđen
+        x = self.fc(x) # B, W, 600
+        x = self.fc1(x) # B, W, 600
+        x = self.fc2(x) # B, W, 600
+        x = self.masks(x) # B, W, self.out_c*256
+
+        masks = x.view(B, W, 2, H).permute(0,2,3,1)
+
+
+        
+
+        out = []
+        for i in range(self.out_c):
+            out.append(masks[:,i,:,:].unsqueeze(1))
+        # print(out)
+        return out
+        
+
+
 class InnerProd(nn.Module):
     def __init__(self, fc_dim):
         super(InnerProd, self).__init__()

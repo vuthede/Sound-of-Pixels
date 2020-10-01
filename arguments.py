@@ -81,7 +81,7 @@ class ArgParser(object):
                             help='folder to output checkpoints')
         parser.add_argument('--disp_iter', type=int, default=20,
                             help='frequency to display')
-        parser.add_argument('--eval_epoch', type=int, default=1,
+        parser.add_argument('--eval_epoch', type=int, default=100,
                             help='frequency to evaluate')
 
         self.parser = parser

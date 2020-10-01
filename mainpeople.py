@@ -32,7 +32,7 @@ wandb.config.description="Strideframe=8, 3 frames, sr=11025, lenaudio=65535==6 s
 class NetWrapper(torch.nn.Module):
     def __init__(self, nets, crit):
         super(NetWrapper, self).__init__()
-        self.net_sound, self.net_frame, self.net_synthesizer = nets
+        self.net_sound, self.net_frame, self.net_synthesizer, self.net_synthesizer_only_audio = nets
         self.crit = crit
 
     def forward(self, batch_data, args):
@@ -44,6 +44,7 @@ class NetWrapper(torch.nn.Module):
         N = args.num_mix
         B = mag_mix.size(0)
         T = mag_mix.size(3)
+        print("Mag_mix: ", mag_mix.shape)
 
         # 0.0 warp the spectrogram
         if args.log_freq:
@@ -79,17 +80,26 @@ class NetWrapper(torch.nn.Module):
         feat_sound = activate(feat_sound, args.sound_activation)
 
         # 2. forward net_frame -> Bx1xC
-        feat_frames = [None for n in range(N)]
-        for n in range(N):
-            feat_frames[n] = self.net_frame.forward_multiframe(frames[n])
-            feat_frames[n] = activate(feat_frames[n], args.img_activation)
+        # feat_frames = [None for n in range(N)]
+        # for n in range(N):
+        #     feat_frames[n] = self.net_frame.forward_multiframe(frames[n])
+        #     feat_frames[n] = activate(feat_frames[n], args.img_activation)
 
-        # 3. sound synthesizer
-        pred_masks = [None for n in range(N)]
+        # # 3. sound synthesizer
+        # pred_masks = [None for n in range(N)]
+        # for n in range(N):
+        #     pred_masks[n] = self.net_synthesizer(feat_frames[n], feat_sound)
+        #     pred_masks[n] = activate(pred_masks[n], args.output_activation)
+
+        pred_masks = self.net_synthesizer_only_audio(feat_sound)
+        # print("YOP", len(pred_masks), pred_masks[0].shape)
         for n in range(N):
-            pred_masks[n] = self.net_synthesizer(feat_frames[n], feat_sound)
             pred_masks[n] = activate(pred_masks[n], args.output_activation)
 
+        # print("Type predmaks:", type(pred_masks))
+        # print("type:", type(pred_masks[0]), pred_masks[0].shape)
+        
+        # print(len(gt_masks))
         # 4. loss
         err = self.crit(pred_masks, gt_masks, weight).reshape(1)
 
@@ -412,11 +422,10 @@ def train(netWrapper, loader, optimizer, history, epoch, args):
             history['train']['epoch'].append(fractional_epoch)
             history['train']['err'].append(err.item())
             wandb.log({"metrics/trainloss": err.item()}) 
-        break
 
 def checkpoint(nets, history, epoch, args):
     print('Saving checkpoints at {} epochs.'.format(epoch))
-    (net_sound, net_frame, net_synthesizer) = nets
+    (net_sound, net_frame, net_synthesizer, net_synthesizer_only_audio) = nets
     suffix_latest = 'latest.pth'
     suffix_best = 'best.pth'
 
@@ -428,6 +437,8 @@ def checkpoint(nets, history, epoch, args):
                '{}/frame_{}'.format(args.ckpt, suffix_latest))
     torch.save(net_synthesizer.state_dict(),
                '{}/synthesizer_{}'.format(args.ckpt, suffix_latest))
+    torch.save(net_synthesizer_only_audio.state_dict(),
+               '{}/synthesizeraudio_{}'.format(args.ckpt, suffix_latest))
 
     cur_err = history['val']['err'][-1]
     if cur_err < args.best_err:
@@ -438,14 +449,16 @@ def checkpoint(nets, history, epoch, args):
                    '{}/frame_{}'.format(args.ckpt, suffix_best))
         torch.save(net_synthesizer.state_dict(),
                    '{}/synthesizer_{}'.format(args.ckpt, suffix_best))
-
+        torch.save(net_synthesizer_only_audio.state_dict(),
+               '{}/synthesizeraudio_{}'.format(args.ckpt, suffix_best))
 
 def create_optimizer(nets, args):
-    (net_sound, net_frame, net_synthesizer) = nets
+    (net_sound, net_frame, net_synthesizer, net_synthesizer_only_audio) = nets
     param_groups = [{'params': net_sound.parameters(), 'lr': args.lr_sound},
                     {'params': net_synthesizer.parameters(), 'lr': args.lr_synthesizer},
                     {'params': net_frame.features.parameters(), 'lr': args.lr_frame},
-                    {'params': net_frame.fc.parameters(), 'lr': args.lr_sound}]
+                    {'params': net_frame.fc.parameters(), 'lr': args.lr_sound},
+                    {'params': net_synthesizer_only_audio.parameters(), 'lr': args.lr_synthesizer}]
     return torch.optim.SGD(param_groups, momentum=args.beta1, weight_decay=args.weight_decay)
 
 
@@ -473,7 +486,9 @@ def main(args):
         arch=args.arch_synthesizer,
         fc_dim=args.num_channels,
         weights=args.weights_synthesizer)
-    nets = (net_sound, net_frame, net_synthesizer)
+    net_synthesizer_only_audio = builder.build_synthesizer_only_audio(args.num_channels, 2)
+
+    nets = (net_sound, net_frame, net_synthesizer, net_synthesizer_only_audio)
     crit = builder.build_criterion(arch=args.loss)
 
     # Dataset and Loader
@@ -529,8 +544,8 @@ def main(args):
             checkpoint(nets, history, epoch, args)
 
         # drop learning rate
-        if epoch in args.lr_steps:
-            adjust_learning_rate(optimizer, args)
+        # if epoch in args.lr_steps:
+        #     adjust_learning_rate(optimizer, args)
 
     print('Training Done!')
 

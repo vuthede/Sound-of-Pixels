@@ -2,7 +2,7 @@ import torch
 import torchvision
 import torch.nn.functional as F
 
-from .synthesizer_net import InnerProd, Bias
+from .synthesizer_net import InnerProd, Bias, SynthesizeOnlyAudio
 from .audio_net import Unet
 from .vision_net import ResnetFC, ResnetDilated
 from .criterion import BCELoss, L1Loss, L2Loss
@@ -85,6 +85,11 @@ class ModelBuilder():
         if len(weights) > 0:
             print('Loading weights for net_synthesizer')
             net.load_state_dict(torch.load(weights))
+        return net
+
+    def build_synthesizer_only_audio(self, in_c, out_c):
+        net = SynthesizeOnlyAudio(in_c, out_c)
+
         return net
 
     def build_criterion(self, arch):

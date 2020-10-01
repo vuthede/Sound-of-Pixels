@@ -51,7 +51,8 @@ class MUSICMixDataset(BaseDataset):
             path_audioN, path_frameN, count_framesN = infoN
 
            
-            center_frameN = random.randint(40, 50) # 3 seconds 30fps =90 frames 
+            # center_frameN = random.randint(40, 50) # 3 seconds 30fps =90 frames 
+            center_frameN=45
             center_frames[n] = center_frameN
 
             # absolute frame/audio paths

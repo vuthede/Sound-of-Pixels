@@ -183,11 +183,11 @@ class BaseDataset(torchdata.Dataset):
             audio_raw[start:end]
 
         # randomize volume
-        if self.split == 'train':
-            scale = random.random() + 0.5     # 0.5-1.5
-            audio *= scale
-        audio[audio > 1.] = 1.
-        audio[audio < -1.] = -1.
+        # if self.split == 'train':
+        #     scale = random.random() + 0.5     # 0.5-1.5
+        #     audio *= scale
+        # audio[audio > 1.] = 1.
+        # audio[audio < -1.] = -1.
 
         return audio
 

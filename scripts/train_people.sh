@@ -32,10 +32,10 @@ OPTS+="--audRate 16000 "
 OPTS+="--num_gpus 1 "
 OPTS+="--workers 16 "
 OPTS+="--batch_size_per_gpu 2 "
-OPTS+="--lr_frame 0 "
+OPTS+="--lr_frame 1e-4 "
 OPTS+="--lr_sound 1e-3 "
 OPTS+="--lr_synthesizer 1e-3 "
-OPTS+="--num_epoch 100 "
+OPTS+="--num_epoch 1000 "
 OPTS+="--lr_steps 40 80 "
 
 #Hops and window
