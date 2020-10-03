@@ -352,7 +352,7 @@ def evaluate(netWrapper, loader, history, epoch, args):
                   sdr_meter.average(),
                   sir_meter.average(),
                   sar_meter.average()))
-    wandb.log({"valloss": loss_meter.average(), "sdr": sdr_meter.average(), "sir": sir_meter.average(), "sar": sar_meter.average()}, step=epoch)
+    wandb.log({"valloss": loss_meter.average(), "sdr": sdr_meter.average(), "sir": sir_meter.average(), "sar": sar_meter.average()})
     history['val']['epoch'].append(epoch)
     history['val']['err'].append(loss_meter.average())
     history['val']['sdr'].append(sdr_meter.average())
@@ -445,7 +445,7 @@ def create_optimizer(nets, args):
                     {'params': net_synthesizer.parameters(), 'lr': args.lr_synthesizer},
                     {'params': net_frame.features.parameters(), 'lr': args.lr_frame},
                     {'params': net_frame.fc.parameters(), 'lr': args.lr_sound}]
-    return torch.optim.SGD(param_groups, momentum=args.beta1, weight_decay=args.weight_decay)
+    return torch.optim.Adam(param_groups, lr = 1e-4, betas=(0.5, 0.999))
 
 
 def adjust_learning_rate(optimizer, args):

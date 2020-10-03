@@ -15,7 +15,7 @@ def find_recursive(root_dir, ext='.mp3'):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    prefix = "/media/Databases/preprocess_avspeech/segment_sam_with_noise"
+    prefix = "/media/Databases/preprocess_avspeech/segment_clean_sam_ffmpeg_small"
     parser.add_argument('--root_audio', default=f'{prefix}/audio',
                         help="root for extracted audio files")
     parser.add_argument('--root_frame', default=f'{prefix}/frames',
@@ -49,7 +49,7 @@ if __name__ == '__main__':
         frame_files = glob.glob(frame_path + '/*.jpg')
         
 
-        if len(frame_files) >= 30 * 3: #90 frames
+        if len(frame_files) >= 8 * 6: #90 frames
             file_id = audio_path.split("/")[-2]
             if file_id in video_train_ids:
                 info_train.append(','.join([audio_path, frame_path, str(len(frame_files))]))

@@ -1,7 +1,7 @@
 #!/bin/bash
 
 OPTS=""
-OPTS+="--id PEOPLE_with_voice_normalized "
+OPTS+="--id PEOPLE_with_voice_normalized_3000speakers "
 OPTS+="--list_train data/train.csv "
 OPTS+="--list_val data/val.csv "
 
@@ -22,19 +22,19 @@ OPTS+="--log_freq 1 "
 # frames-related
 OPTS+="--num_frames 3 "
 OPTS+="--stride_frames 8 "
-OPTS+="--frameRate 30 "
+OPTS+="--frameRate 8 "
 
 # audio-related
 OPTS+="--audLen 65535 "
-OPTS+="--audRate 11025 "
+OPTS+="--audRate 16000 "
 
 # learning params
 OPTS+="--num_gpus 2 "
 OPTS+="--workers 16 "
 OPTS+="--batch_size_per_gpu 20 "
 OPTS+="--lr_frame 1e-4 "
-OPTS+="--lr_sound 1e-3 "
-OPTS+="--lr_synthesizer 1e-3 "
+OPTS+="--lr_sound 1e-4 "
+OPTS+="--lr_synthesizer 1e-4 "
 OPTS+="--num_epoch 100 "
 OPTS+="--lr_steps 40 80 "
 

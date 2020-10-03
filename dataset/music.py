@@ -17,7 +17,7 @@ class MUSICMixDataset(BaseDataset):
     def __random_silence_video(self):
         # 10% will be silience video
         a = np.random.randint(0,10)
-        if a>=1:
+        if a>=-1:
             return False
         return True
 
@@ -55,7 +55,7 @@ class MUSICMixDataset(BaseDataset):
                 #print(f'idx_margin: {idx_margin}. countframes:{count_framesN}')
                 #center_frameN = random.randint(
                  #   idx_margin+1, int(count_framesN)-idx_margin)
-                center_frameN = random.randint(10, 80)
+                center_frameN = random.randint(10, 39)
             else:
                 center_frameN = int(count_framesN) // 2
             center_frames[n] = center_frameN
@@ -77,8 +77,8 @@ class MUSICMixDataset(BaseDataset):
             for i in range(self.num_frames):
                 path_frames[1].append(self.__random_scence_image())
             path_audios[1] = "FakeSilenceFile.silent" # it can be any string as long as it ends by "silent"
-        else:
-            print("Using normal image and video")
+        #else:
+            #print("Using normal image and video")
 
         # load frames and audios, STFT
         try:
