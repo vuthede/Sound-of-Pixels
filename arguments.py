@@ -4,7 +4,7 @@ import argparse
 class ArgParser(object):
     def __init__(self):
         #resume = "/home/vtde/Sound-of-Pixels/ckpt/PEOPLE-2mix-LogFreq-resnet18dilated-unet7-linear-frames20stride1-maxpool-binary-weightedLoss-channels32-epoch100-step40_80"
-        resume = "./oldckps"
+        #resume = "./oldckps"
         parser = argparse.ArgumentParser()
         # Model related arguments
         parser.add_argument('--id', default='',
@@ -17,11 +17,11 @@ class ArgParser(object):
                             help="architecture of net_frame")
         parser.add_argument('--arch_synthesizer', default='linear',
                             help="architecture of net_synthesizer")
-        parser.add_argument('--weights_sound', default=f'{resume}/sound_latest.pth',
+        parser.add_argument('--weights_sound', default='./ckpt/sound_best.pth',
                             help="weights to finetune net_sound")
-        parser.add_argument('--weights_frame', default=f'{resume}/frame_latest.pth',
+        parser.add_argument('--weights_frame', default=f'./ckpt/frame_best.pth',
                             help="weights to finetune net_frame")
-        parser.add_argument('--weights_synthesizer', default=f'{resume}/synthesizer_latest.pth',
+        parser.add_argument('--weights_synthesizer', default=f'./ckpt/synthesizer_best.pth',
                             help="weights to finetune net_synthesizer")
         parser.add_argument('--num_channels', default=32, type=int,
                             help='number of channels')
@@ -60,13 +60,13 @@ class ArgParser(object):
         parser.add_argument('--num_vis', default=40, type=int,
                             help='number of images to evalutate')
 
-        parser.add_argument('--audLen', default=65535, type=int,
+        parser.add_argument('--audLen', default=48000, type=int,
                             help='sound length')
-        parser.add_argument('--audRate', default=11025, type=int,
+        parser.add_argument('--audRate', default=16000, type=int,
                             help='sound sampling rate')
-        parser.add_argument('--stft_frame', default=1022, type=int,
+        parser.add_argument('--stft_frame', default=400, type=int,
                             help="stft frame length")
-        parser.add_argument('--stft_hop', default=256, type=int,
+        parser.add_argument('--stft_hop', default=160, type=int,
                             help="stft hop length")
 
         parser.add_argument('--imgSize', default=224, type=int,
@@ -95,7 +95,7 @@ class ArgParser(object):
                             default='data/train.csv')
         parser.add_argument('--list_val',
                             default='data/val.csv')
-        parser.add_argument('--dup_trainset', default=2, type=int,
+        parser.add_argument('--dup_trainset', default=1, type=int,
                             help='duplicate so that one epoch has more iters')
 
         # optimization related arguments

@@ -20,15 +20,22 @@ class BaseDataset(torchdata.Dataset):
         self.imgSize = opt.imgSize
         self.audRate = opt.audRate
         self.audLen = opt.audLen
-        self.audSec = 1. * self.audLen / self.audRate
+        
+        #self.audSec = 1. * self.audLen / self.audRate
+        self.audSec = 3
         self.binary_mask = opt.binary_mask
 
         # STFT params
         self.log_freq = opt.log_freq
         self.stft_frame = opt.stft_frame
         self.stft_hop = opt.stft_hop
-        self.HS = opt.stft_frame // 2 + 1
-        self.WS = (self.audLen + 1) // self.stft_hop
+        #self.HS = opt.stft_frame // 2 + 1
+        #self.WS = (self.audLen + 1) // self.stft_hop
+        print("self.stft_frame: ", self.stft_frame, "self.stft_hop: ", self.stft_hop)
+        print("sr . audSec:", self.audRate, " ", self.audLen)
+        self.HS= 256
+        self.WS= 288
+       
 
         self.split = split
         self.seed = opt.seed
@@ -114,8 +121,10 @@ class BaseDataset(torchdata.Dataset):
         return img
 
     def _stft(self, audio):
+        audio = audio[:self.audLen-5*self.stft_frame]
         spec = librosa.stft(
-            audio, n_fft=self.stft_frame, hop_length=self.stft_hop)
+            audio, n_fft=510,win_length=self.stft_frame, hop_length=self.stft_hop)
+        #print("Spec shape: ", spec.shape)
         amp = np.abs(spec)
         phase = np.angle(spec)
         return torch.from_numpy(amp), torch.from_numpy(phase)
@@ -134,11 +143,14 @@ class BaseDataset(torchdata.Dataset):
         #     else:
         #         audio_raw = audio_raw[0, :]
         # else:
-        audio_raw, rate = librosa.load(path, sr=None, mono=True)
+        audio_raw, rate = librosa.load(path, sr=16000, mono=True)
         audio_raw = audio_raw/np.max(audio_raw) # Devu added to normalize
         return audio_raw, rate
 
     def _load_audio(self, path, center_timestamp, nearest_resample=False):
+        
+        # Devu Added. remove 5 last frames, so that the created spec have W=288, which can be passed throught unert 5 without
+        # Error mismatch size
         audio = np.zeros(self.audLen, dtype=np.float32)
 
         # silent
@@ -170,12 +182,15 @@ class BaseDataset(torchdata.Dataset):
         audio[self.audLen//2-(center-start): self.audLen//2+(end-center)] = \
             audio_raw[start:end]
 
+        
+        
+
         # randomize volume
-        if self.split == 'train':
-            scale = random.random() + 0.5     # 0.5-1.5
-            audio *= scale
-        audio[audio > 1.] = 1.
-        audio[audio < -1.] = -1.
+        #if self.split == 'train':
+            #scale = random.random() + 0.5     # 0.5-1.5
+            #audio *= scale
+        #audio[audio > 1.] = 1.
+        #audio[audio < -1.] = -1.
 
         return audio
 

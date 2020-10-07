@@ -116,11 +116,12 @@ def calc_metrics(batch_data, outputs, args):
     # unwarp log scale
     N = args.num_mix
     B = mag_mix.size(0)
+    T = mag_mix.size(3)
     pred_masks_linear = [None for n in range(N)]
     for n in range(N):
         if args.log_freq:
             grid_unwarp = torch.from_numpy(
-                warpgrid(B, args.stft_frame//2+1, pred_masks_[0].size(3), warp=False)).to(args.device)
+                warpgrid(B, 256, T, warp=False)).to(args.device)
             pred_masks_linear[n] = F.grid_sample(pred_masks_[n], grid_unwarp)
         else:
             pred_masks_linear[n] = pred_masks_[n]
@@ -191,12 +192,13 @@ def output_visuals(vis_rows, batch_data, outputs, args):
     # unwarp log scale
     N = args.num_mix
     B = mag_mix.size(0)
+    T = mag_mix.size(3)
     pred_masks_linear = [None for n in range(N)]
     gt_masks_linear = [None for n in range(N)]
     for n in range(N):
         if args.log_freq:
             grid_unwarp = torch.from_numpy(
-                warpgrid(B, args.stft_frame//2+1, gt_masks_[0].size(3), warp=False)).to(args.device)
+                warpgrid(B, 256, T, warp=False)).to(args.device)
             pred_masks_linear[n] = F.grid_sample(pred_masks_[n], grid_unwarp)
             gt_masks_linear[n] = F.grid_sample(gt_masks_[n], grid_unwarp)
         else:

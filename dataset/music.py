@@ -3,6 +3,7 @@ import random
 from .base import BaseDataset
 import glob
 import numpy as np
+import time
 
 class MUSICMixDataset(BaseDataset):
     # Used for silence video
@@ -26,6 +27,7 @@ class MUSICMixDataset(BaseDataset):
         return self.list_scence_image[index]
 
     def __getitem__(self, index):
+        t1 =  time.time()
         N = self.num_mix
         frames = [None for n in range(N)]
         audios = [None for n in range(N)]
@@ -55,7 +57,7 @@ class MUSICMixDataset(BaseDataset):
                 #print(f'idx_margin: {idx_margin}. countframes:{count_framesN}')
                 #center_frameN = random.randint(
                  #   idx_margin+1, int(count_framesN)-idx_margin)
-                center_frameN = random.randint(10, 39)
+                center_frameN = random.randint(13, 35)
             else:
                 center_frameN = int(count_framesN) // 2
             center_frames[n] = center_frameN
@@ -101,5 +103,8 @@ class MUSICMixDataset(BaseDataset):
             ret_dict['audios'] = audios
             ret_dict['phase_mix'] = phase_mix
             ret_dict['infos'] = infos
-
+        #print("1 item")
+        if index%100==0:
+            print("Time to load and preapre a sample:", time.time()-t1)
+        
         return ret_dict
