@@ -34,7 +34,7 @@ class BaseDataset(torchdata.Dataset):
         print("self.stft_frame: ", self.stft_frame, "self.stft_hop: ", self.stft_hop)
         print("sr . audSec:", self.audRate, " ", self.audLen)
         self.HS= 256
-        self.WS= 288
+        self.WS= 256
        
 
         self.split = split
@@ -121,7 +121,7 @@ class BaseDataset(torchdata.Dataset):
         return img
 
     def _stft(self, audio):
-        audio = audio[:self.audLen-5*self.stft_frame]
+        audio = audio[:self.audLen-18*self.stft_frame]
         spec = librosa.stft(
             audio, n_fft=510,win_length=self.stft_frame, hop_length=self.stft_hop)
         #print("Spec shape: ", spec.shape)

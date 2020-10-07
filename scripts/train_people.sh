@@ -1,12 +1,12 @@
 #!/bin/bash
 
 OPTS=""
-OPTS+="--id PEOPLE_with_voice_normalized_3000speakers_hopsize_wav "
+OPTS+="--id PEOPLE_exp_spectrogram256x256_unet7 "
 OPTS+="--list_train data/train.csv "
 OPTS+="--list_val data/val.csv "
 
 # Models
-OPTS+="--arch_sound unet5 "
+OPTS+="--arch_sound unet7 "
 OPTS+="--arch_synthesizer linear "
 OPTS+="--arch_frame resnet18dilated "
 OPTS+="--img_pool maxpool "
@@ -20,8 +20,8 @@ OPTS+="--num_mix 2 "
 OPTS+="--log_freq 1 "
 
 # frames-related
-OPTS+="--num_frames 13 "
-OPTS+="--stride_frames 2 "
+OPTS+="--num_frames 3 "
+OPTS+="--stride_frames 8 "
 OPTS+="--frameRate 8 "
 
 # audio-related
@@ -30,7 +30,7 @@ OPTS+="--audRate 16000 "
 
 # learning params
 OPTS+="--num_gpus 2 "
-OPTS+="--workers 16 "
+OPTS+="--workers 4 "
 OPTS+="--batch_size_per_gpu 10 "
 OPTS+="--lr_frame 1e-4 "
 OPTS+="--lr_sound 1e-4 "

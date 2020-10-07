@@ -17,11 +17,11 @@ class ArgParser(object):
                             help="architecture of net_frame")
         parser.add_argument('--arch_synthesizer', default='linear',
                             help="architecture of net_synthesizer")
-        parser.add_argument('--weights_sound', default='./ckpt/sound_best.pth',
+        parser.add_argument('--weights_sound', default='',
                             help="weights to finetune net_sound")
-        parser.add_argument('--weights_frame', default=f'./ckpt/frame_best.pth',
+        parser.add_argument('--weights_frame', default=f'',
                             help="weights to finetune net_frame")
-        parser.add_argument('--weights_synthesizer', default=f'./ckpt/synthesizer_best.pth',
+        parser.add_argument('--weights_synthesizer', default=f'',
                             help="weights to finetune net_synthesizer")
         parser.add_argument('--num_channels', default=32, type=int,
                             help='number of channels')
