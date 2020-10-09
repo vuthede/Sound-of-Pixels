@@ -57,7 +57,7 @@ class MUSICMixDataset(BaseDataset):
                 #print(f'idx_margin: {idx_margin}. countframes:{count_framesN}')
                 #center_frameN = random.randint(
                  #   idx_margin+1, int(count_framesN)-idx_margin)
-                center_frameN = random.randint(13, 35)
+                center_frameN = random.randint(9,17)
             else:
                 center_frameN = int(count_framesN) // 2
             center_frames[n] = center_frameN

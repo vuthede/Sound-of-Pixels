@@ -9,7 +9,7 @@ import librosa
 from PIL import Image
 
 from . import video_transforms as vtransforms
-
+import time
 
 class BaseDataset(torchdata.Dataset):
     def __init__(self, list_sample, opt, max_sample=-1, split='train'):
@@ -110,9 +110,21 @@ class BaseDataset(torchdata.Dataset):
                 transforms.Normalize(mean, std)])
 
     def _load_frames(self, paths):
+        s = time.time()
         frames = []
         for path in paths:
             frames.append(self._load_frame(path))
+        frames = self.vid_transform(frames)
+        #print("Time load and transform iamge: ", time.time()-s)
+        return frames
+    def _load_fake_frames(self, paths):
+        frames = []
+        for path in paths:
+            size = (256, 256)
+            color = (127,127,127)
+            im = Image.new('RGB', size, color)
+            frames.append(im)
+
         frames = self.vid_transform(frames)
         return frames
 
@@ -143,7 +155,9 @@ class BaseDataset(torchdata.Dataset):
         #     else:
         #         audio_raw = audio_raw[0, :]
         # else:
+        s  =time.time()
         audio_raw, rate = librosa.load(path, sr=16000, mono=True)
+        #print("Load audio file:", time.time()-s)
         audio_raw = audio_raw/np.max(audio_raw) # Devu added to normalize
         return audio_raw, rate
 

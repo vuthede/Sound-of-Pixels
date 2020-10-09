@@ -1,7 +1,7 @@
 #!/bin/bash
 
 OPTS=""
-OPTS+="--id PEOPLE_exp_spectrogram256x256_unet7 "
+OPTS+="--id PEOPLE_exp_spectrogram256x256_unet7_34ktraining "
 OPTS+="--list_train data/train.csv "
 OPTS+="--list_val data/val.csv "
 
@@ -48,7 +48,7 @@ OPTS+="--lr_steps 100 200 "
 
 # display, viz
 OPTS+="--disp_iter 20 "
-OPTS+="--num_vis 40 "
+OPTS+="--num_vis 100 "
 OPTS+="--num_val 256 "
 
 python -W ignore -u mainpeople.py $OPTS
