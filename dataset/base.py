@@ -47,7 +47,7 @@ class BaseDataset(torchdata.Dataset):
         print("self.stft_frame: ", self.stft_frame, "self.stft_hop: ", self.stft_hop)
         print("sr . audSec:", self.audRate, " ", self.audLen)
         self.HS= 256
-        self.WS= 256
+        self.WS= 300
        
         #Cache object directory for faster training
         self.cache = "/media/Databases/preprocess_LRS2/.cache"
