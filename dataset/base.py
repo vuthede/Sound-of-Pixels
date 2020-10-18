@@ -9,6 +9,19 @@ import librosa
 from PIL import Image
 
 from . import video_transforms as vtransforms
+import pickle
+import hashlib
+import os
+from threading import Thread
+
+"""
+\Create hash value for a list
+"""
+def create_hash_value(r):
+    p = pickle.dumps(r, -1)
+    key = hashlib.md5(p).hexdigest()
+    key = f'{key}.pt'
+    return key
 
 
 class BaseDataset(torchdata.Dataset):
@@ -36,6 +49,11 @@ class BaseDataset(torchdata.Dataset):
         self.HS= 256
         self.WS= 256
        
+        #Cache object directory for faster training
+        self.cache = "/media/Databases/preprocess_LRS2/.cache"
+        if not os.path.isdir(self.cache):
+            os.makedirs(self.cache)
+
 
         self.split = split
         self.seed = opt.seed
@@ -110,10 +128,20 @@ class BaseDataset(torchdata.Dataset):
                 transforms.Normalize(mean, std)])
 
     def _load_frames(self, paths):
-        frames = []
-        for path in paths:
-            frames.append(self._load_frame(path))
-        frames = self.vid_transform(frames)
+        # Using cache to speed up training
+        key = create_hash_value(paths)
+        if os.path.isfile(f'{self.cache}/{key}'):
+            frames = torch.load(f'{self.cache}/{key}')
+            print("Using Cache to load ", key)
+        else:
+            frames = []
+            for path in paths:
+                frames.append(self._load_frame(path))
+            frames = self.vid_transform(frames)
+            Thread(target=lambda a,b: torch.save(a,b), args=(frames, f'{self.cache}/{key}')).start()
+            #torch.save(frames,f'{self.cache}/{key}')
+            print("Using a thread to save  .pt file")
+
         return frames
 
     def _load_frame(self, path):
@@ -121,7 +149,7 @@ class BaseDataset(torchdata.Dataset):
         return img
 
     def _stft(self, audio):
-        audio = audio[:self.audLen-18*self.stft_frame]
+        audio = audio[:self.audLen-1*self.stft_hop]
         spec = librosa.stft(
             audio, n_fft=510,win_length=self.stft_frame, hop_length=self.stft_hop)
         #print("Spec shape: ", spec.shape)

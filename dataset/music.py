@@ -57,7 +57,8 @@ class MUSICMixDataset(BaseDataset):
                 #print(f'idx_margin: {idx_margin}. countframes:{count_framesN}')
                 #center_frameN = random.randint(
                  #   idx_margin+1, int(count_framesN)-idx_margin)
-                center_frameN = random.randint(13, 35)
+                #center_frameN = random.randint(20, 30)
+                center_frameN = int(count_framesN) //2
             else:
                 center_frameN = int(count_framesN) // 2
             center_frames[n] = center_frameN
@@ -65,10 +66,23 @@ class MUSICMixDataset(BaseDataset):
             # absolute frame/audio paths
             for i in range(self.num_frames):
                 idx_offset = (i - self.num_frames // 2) * self.stride_frames
-                path_frames[n].append(
-                    os.path.join(
+                if(center_frameN + idx_offset <1):
+                    frame_path =  os.path.join(
                         path_frameN,
-                        '{:06d}.jpg'.format(center_frameN + idx_offset)))
+                        '{:06d}.jpg'.format(1))
+                
+                elif (center_frameN + idx_offset >int(count_framesN)):
+                    frame_path =  os.path.join(
+                        path_frameN,
+                        '{:06d}.jpg'.format(int(count_framesN)))
+		
+                else:
+                    frame_path =  os.path.join(
+                        path_frameN,
+                        '{:06d}.jpg'.format(center_frameN + idx_offset))
+
+                
+                path_frames[n].append(frame_path)
             path_audios[n] = path_audioN
         
         # Random 30 % using silent audio to regulalize model
