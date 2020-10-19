@@ -211,7 +211,7 @@ class LRS2(torch.utils.data.Dataset):
             # phases.append(phase)
 
         # return frames[0], specs[0], torch.stack(specs[1:])
-        return frames[0], waves[0]
+        return frames[0], waves[0][0]
     
     def getvideoname(self, index):
         return self.filelist[index]
