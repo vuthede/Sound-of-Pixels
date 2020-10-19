@@ -581,8 +581,8 @@ def main(args):
     # dataset_val = MUSICMixDataset(scence_image_dir,
     #     args.list_val, args, max_sample=args.num_val, split='val')
 
-    dataset_train = LIPSMIXDATASET(root_dir="/home/vtde/dataset/mvlrs_v1", split="train")
-    dataset_val = LIPSMIXDATASET(root_dir="/home/vtde/dataset/mvlrs_v1", split="val")
+    dataset_train = LIPSMIXDATASET(root_dir="/home/vtde/dataset/mvlrs_v1", split="train", duration=3)
+    dataset_val = LIPSMIXDATASET(root_dir="/home/vtde/dataset/mvlrs_v1", split="val", duration=3)
 
      
     loader_train = torch.utils.data.DataLoader(

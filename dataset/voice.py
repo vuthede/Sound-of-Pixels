@@ -12,8 +12,8 @@ import torch
 class LIPSMIXDATASET(LRS2):
     # Used for silence video
     # SCENCE_IMAGE_DIR = "/home/ubuntu/MyHelperModule/downloaddata/download_data_for_sound_of_pixel_paper/image_sence"
-    def __init__(self,  root_dir, split = "train", **kwargs):
-        super(LIPSMIXDATASET, self).__init__(root_dir, split, **kwargs)
+    def __init__(self,  root_dir, split = "train", duration=3,**kwargs):
+        super(LIPSMIXDATASET, self).__init__(root_dir=root_dir, split=split,duration=duration,**kwargs)
 
     def _stft(self, audio):
         audio = audio[:self.audLen-1*self.stft_hop]
