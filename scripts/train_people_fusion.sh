@@ -1,7 +1,7 @@
 #!/bin/bash
 
 OPTS=""
-OPTS+="--id LIPS_bilstm "
+OPTS+="--id LIPS_bilstm_fastdataloader "
 OPTS+="--list_train data/trainlrs2s_fusion.csv "
 OPTS+="--list_val data/vallrs2s_fusion.csv "
 
@@ -48,4 +48,4 @@ OPTS+="--disp_iter 20 "
 OPTS+="--num_vis 40 "
 OPTS+="--num_val 256 "
 
-python -W ignore -u mainpeople_fusion.py $OPTS
+python -W ignore -u mainpeople_fusion_lrs2.py $OPTS
