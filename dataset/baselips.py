@@ -42,6 +42,7 @@ class LRS2(torch.utils.data.Dataset):
         self.std = np.array([0.229, 0.224, 0.225]).reshape(1, 1, 3)
         self.duration = duration
         self.num_negative = num_negative
+        self.split = "split"
 
     def __len__(self):
         return len(self.filelist)

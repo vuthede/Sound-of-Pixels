@@ -152,8 +152,9 @@ class FusionNetWrapper(torch.nn.Module):
         log_mag_mix = torch.log(mag_mix).detach()
 
         # 1. forward net_sound -> BxCxHxW
-        print("Size lof mag mix: ", log_mag_mix.shape)
+        #print("Size lof mag mix: ", log_mag_mix.shape)
         log_mag_mix = log_mag_mix.squeeze(1)  # Bx256x300
+        #print("Mag mix sound: ")
         feat_sound = self.net_sound(log_mag_mix)  # B x 256 x 4T
         # feat_sound = activate(feat_sound, args.sound_activation)
 
@@ -161,7 +162,7 @@ class FusionNetWrapper(torch.nn.Module):
         feat_frames = [None for n in range(N)]
         fusion_data = [None for n in range(N)]
         #print("FEat frame before : ",frames[0].shape)
-
+        #print(f"feat sound : {feat_sound.shape}")
         for n in range(N):
             feat_frames[n] = self.net_frame_dilated.forward_multiframe(frames[n])  # B x 256 x T
             feat_frames[n] = self.net_video(feat_frames[n])  # B x 256 x4T
@@ -509,7 +510,7 @@ def train(netWrapper, loader, optimizer, history, epoch, args):
             history['train']['epoch'].append(fractional_epoch)
             history['train']['err'].append(err.item())
             wandb.log({"metrics/trainloss": err.item()}) 
-
+       
 def checkpoint(nets, history, epoch, args):
     print('Saving checkpoints at {} epochs.'.format(epoch))
     (net_sound, net_frame_dilated, net_video, net_fusion) = nets

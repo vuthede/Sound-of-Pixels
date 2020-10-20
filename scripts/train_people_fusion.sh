@@ -2,7 +2,7 @@
 
 OPTS=""
 OPTS+="--id LIPS_bilstm_fastdataloader "
-OPTS+="--list_train data/trainlrs2s_fusion.csv "
+OPTS+="--list_train data/trainlrs2s_fusiondebug.csv "
 OPTS+="--list_val data/vallrs2s_fusion.csv "
 
 # Models
@@ -46,6 +46,6 @@ OPTS+="--lr_steps 40 80 "
 # display, viz
 OPTS+="--disp_iter 20 "
 OPTS+="--num_vis 40 "
-OPTS+="--num_val 256 "
+OPTS+="--num_val 5 "
 
 python -W ignore -u mainpeople_fusion_lrs2.py $OPTS

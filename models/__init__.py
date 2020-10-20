@@ -6,7 +6,7 @@ from .synthesizer_net import InnerProd, Bias
 from .audio_net import Unet
 from .vision_net import ResnetFC, ResnetDilated
 from .criterion import BCELoss, L1Loss, L2Loss
-
+from .ourmodels import AudioMixtureResNet1D, ResnetDilated1D, VideoResNet1D, AudioMixtureResNet1D, AVFusion1D
 
 def activate(x, activation):
     if activation == 'sigmoid':
@@ -97,3 +97,45 @@ class ModelBuilder():
         else:
             raise Exception('Architecture undefined!')
         return net
+
+
+
+
+
+
+
+
+class OurModelBUilder():
+    def __init__(self):
+        super().__init__()
+    
+    def build_sound(self):
+        return AudioMixtureResNet1D(n_channel_inp=256,  n_channel_fc0=1536, n_channel_conv=1536, n_channel_fc6=256)
+    
+    def build_frame_dilated(self):
+        original_resnet = torchvision.models.resnet18(True)
+        return ResnetDilated1D(original_resnet, pool_type="maxpool", dilate_scale=8)
+
+    def build_video(self):
+        return VideoResNet1D(n_channel_inp=512,  n_channel_fc0=1536, n_channel_conv=1536, n_channel_fc10=256)
+
+    def build_audio(self):
+        return AudioMixtureResNet1D(n_channel_inp=256,  n_channel_fc0=1536, n_channel_conv=1536, n_channel_fc6=256)
+
+    def build_fusion(self):
+        return AVFusion1D(512, 256)
+
+    def build_criterion(self, arch):
+        if arch == 'bce':
+            net = BCELoss()
+        elif arch == 'l1':
+            net = L1Loss()
+        elif arch == 'l2':
+            net = L2Loss()
+        else:
+            raise Exception('Architecture undefined!')
+        return net
+
+
+
+

@@ -16,11 +16,13 @@ class LIPSMIXDATASET(LRS2):
         super(LIPSMIXDATASET, self).__init__(root_dir=root_dir, split=split,duration=duration,**kwargs)
 
     def _stft(self, audio):
-        audio = audio[:self.audLen-1*self.stft_hop]
+        audio = audio[:-1*self.hop_length]
         spec = librosa.stft(
-            audio, sr=self.sampling_rate, n_fft = self.n_fft, hop_length=self.hop_length)
+            audio, n_fft = self.n_fft-2, hop_length=self.hop_length)
+      
         #print("Spec shape: ", spec.shape)
         amp = np.abs(spec)
+       # print(f"Len audio:{len(audio)}. Len amp :{amp.shape}")
         phase = np.angle(spec)
         return torch.from_numpy(amp), torch.from_numpy(phase)
 
@@ -50,7 +52,7 @@ class LIPSMIXDATASET(LRS2):
 
     def __getitem__(self, index):
         t1 =  time.time()
-        N = self.num_mix
+        N = 2 # 2people
         frames = [None for n in range(N)]
         audios = [None for n in range(N)]
         infos = [[] for n in range(N)]
@@ -65,7 +67,7 @@ class LIPSMIXDATASET(LRS2):
             random.seed(index)
         for n in range(1, N):
             indexN = random.randint(0, self.__len__() -1)
-            info[n] = [self.getvideoname(indexN), indexN]
+            infos[n] = [self.getvideoname(indexN), indexN]
 
 
         # Mix N samples
@@ -79,8 +81,10 @@ class LIPSMIXDATASET(LRS2):
 
         except Exception as e:
             print('Failed loading frame/audio: {}'.format(e))
-       
-
+            mag_mix = None
+            mags = None
+            phase_mix = None
+           
         ret_dict = {'mag_mix': mag_mix, 'frames': frames, 'mags': mags}
         if self.split != 'train':
             ret_dict['audios'] = audios
